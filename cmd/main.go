@@ -33,18 +33,13 @@ var uploader = s3manager.NewUploader(sess)
 // Create a downloader with session and default option
 var downloader = s3manager.NewDownloader(sess)
 
-type File struct {
-	Uploader   *s3manager.Uploader
-	Downloader *s3manager.Downloader
-}
-
 func main() {
 	fmt.Println("lambda running....")
 	lambda.Start(ReceiveEvent)
 }
 
 func ReceiveEvent(ctx context.Context, request Data) (string, error) {
-	file := File{uploader, downloader}
+	file := internal.File{Uploader: uploader, Downloader: downloader}
 	if isImage(request.Key) && !strings.Contains(request.Key, "_thumbnail") {
 		generateThumbnail(request.Bucket, request.Key)
 	}

@@ -13,11 +13,16 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type File struct {
+	Uploader   *s3manager.Uploader
+	Downloader *s3manager.Downloader
+}
+
 func IsPdf(name string) bool {
 	return strings.HasSuffix(name, ".pdf")
 }
 
-func GeneratePdfThumbnail(bucket, key string) {
+func GeneratePdfThumbnail(bucket, key string, file File) {
 	info := strings.Split(key, ".")
 	fileName, extension := info[0], info[1]
 	localOriginal := fmt.Sprintf("/tmp/original.%s", extension)
@@ -36,7 +41,7 @@ func GeneratePdfThumbnail(bucket, key string) {
 		return
 	}
 
-	n, err := Downloader.Download(f, &s3.GetObjectInput{
+	n, err := file.Downloader.Download(f, &s3.GetObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
 	})
@@ -70,7 +75,7 @@ func GeneratePdfThumbnail(bucket, key string) {
 
 	bimg.Write("/tmp/original.jpg", newImage)
 
-	thumbName := fmt.Sprintf("%s_thumbnail.jpg", fileName)
+	thumbName := fmt.Sprintf("thumbnail/%s_thumbnail.jpg", fileName)
 
 	// upload thumbnail to S3
 	up, err := os.Open("/tmp/original.jpg")
@@ -79,7 +84,7 @@ func GeneratePdfThumbnail(bucket, key string) {
 		return
 	}
 
-	result, err := uploader.Upload(&s3manager.UploadInput{
+	result, err := file.Uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(thumbName),
 		Body:   up,
