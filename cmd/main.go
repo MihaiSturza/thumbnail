@@ -45,7 +45,7 @@ func ReceiveEvent(ctx context.Context, request Data) (string, error) {
 	}
 	if internal.IsPdf(request.Key) {
 		fmt.Print(file)
-		internal.GeneratePdfThumbnail(request.Bucket, request.Key, file)
+		// internal.GeneratePdfThumbnail(request.Bucket, request.Key, file)
 
 	}
 	return fmt.Sprintf("Data received and processed: %v", request), nil

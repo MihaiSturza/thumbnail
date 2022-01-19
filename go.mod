@@ -6,8 +6,8 @@ require (
 	github.com/aws/aws-lambda-go v1.27.1
 	github.com/aws/aws-sdk-go v1.42.23
 	github.com/disintegration/imaging v1.6.2
-	github.com/h2non/bimg v1.1.5
 	github.com/sirupsen/logrus v1.8.1
+// gopkg.in/gographics/imagick.v3 v3.4.0
 )
 
 require (
